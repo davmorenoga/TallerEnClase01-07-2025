@@ -1,29 +1,27 @@
-name: Deploy Monitoring Stack
+# .github/workflows/deploy-monitoring.yml
+
+name: Deploy Monitoring Stack to EC2
 
 on:
-  workflow_dispatch:
-  push:
-    paths:
-      - 'monitoring/**'
-      - 'grafana/**'
-      - 'docker-compose.yml'
   workflow_run:
-    workflows: ["Deploy App to EC2"]
+    # 1. Nombre del pipeline que debe terminar para que este se ejecute
+    workflows: ["Deploy Application to EC2"]
     types:
       - completed
+    branches:
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Deploy monitoring stack on EC2
-      uses: appleboy/ssh-action@v1.0.0
-      with:
-        host: ${{ secrets.EC2_HOST }}
-        username: ${{ secrets.EC2_USER }}
-        key: ${{ secrets.EC2_SSH_KEY }}
-        script: |
-          cd ~/TallerEnClase01-07-2025 || exit 1
-          git pull origin main
-          docker compose up -d prometheus grafana
+      - name: Deploy to EC2 via SSH
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd ~/TallerEnClase01-07-2025
+            git pull
+            docker-compose up -d prometheus grafana
