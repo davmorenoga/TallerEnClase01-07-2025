@@ -21,6 +21,6 @@ jobs:
         script: |
           cd ~/TallerEnClase01-07-2025 || exit 1
           git pull origin main
-          docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
+          docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GT_TOKEN }}
           docker compose pull flask_app
           docker compose up -d flask_app
