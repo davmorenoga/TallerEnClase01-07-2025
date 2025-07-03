@@ -1,19 +1,23 @@
 name: Deploy Monitoring Stack
 
 on:
+  workflow_dispatch:
   push:
     paths:
       - 'monitoring/**'
       - 'grafana/**'
       - 'docker-compose.yml'
-  workflow_dispatch:
+  workflow_run:
+    workflows: ["Deploy App to EC2"]
+    types:
+      - completed
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Deploy monitoring services
+    - name: Deploy monitoring services on EC2
       uses: appleboy/ssh-action@v1.0.0
       with:
         host: ${{ secrets.EC2_HOST }}
